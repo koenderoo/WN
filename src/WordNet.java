@@ -1,59 +1,40 @@
 import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.In;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class WordNet {
 
     //datastructures
-    private final Bag<Integer>[] adjHypernyms;
-    private final Synset[] synsetList;
+    private final List<Bag<Integer>> adjHypernyms;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
         In in = new In(hypernyms);
-        String[] hyps = in.readAllLines();
-        adjHypernyms = (Bag<Integer>[]) new Bag[hyps.length];
-        // initialize Bag
-        for (int i = 0; i < hyps.length; i++) { adjHypernyms[i] = new Bag<Integer>(); }
-        // fill it up
-        for (String h : hyps) {
-            String[] parts = h.split(",");
-            adjHypernyms[Integer.parseInt(parts[0])].add(Integer.parseInt(parts[1]));
-        }
 
-        in = new In(synsets);
-        String[] syns = in.readAllLines();
-        synsetList = new Synset[syns.length];
-        for (String s : syns) {
-            String[] parts = s.split(",");
-            String[] nouns = parts[1].split(" ");
-            synsetList[Integer.parseInt(parts[0])].nouns = nouns;
-            synsetList[Integer.parseInt(parts[0])].gloss = parts[2];
+
+        // create empty Digraph
+        adjHypernyms = new ArrayList<Bag<Integer>>();
+
+        // fill it up
+        while (in.hasNextLine()) {
+            String[] parts = in.readLine().split(",");
+            // only add when exists of 2 parts (last line is not)
+            if (parts.length < 2) break;
+            // add new Bag when not exist
+            Integer index = Integer.parseInt(parts[0]);
+            try {
+                adjHypernyms.get( index ).add(Integer.parseInt(parts[1]));
+            } catch ( IndexOutOfBoundsException e ) {
+                adjHypernyms.add( index, new Bag<Integer>() );
+                adjHypernyms.get( index ).add(Integer.parseInt(parts[1]));
+            }
         }
 
         System.out.print("debug break");
-    }
-
-    private class Synset {
-
-
-        private String[] nouns;
-        private String gloss;
-
-        public Synset(String[] n, String g) {
-            this.nouns = n;
-            this.gloss = g;
-        }
-
-        public String[] getNouns() {
-            return nouns;
-        }
-
-        public String getGloss() {
-            return gloss;
-        }
-
     }
 
     // returns all WordNet nouns
