@@ -8,20 +8,20 @@ import java.util.Map;
 
 public class WordNet {
 
-    //datastructures
-    private Map<String, ArrayList<Integer>> allNouns = new HashMap<>();
-    private Map<Integer, String> allKeys = new HashMap<>();
-    private Map<Integer, ArrayList<Integer>> edges = new HashMap<>(); // Edges between vertices
-    private SAP sap;
-    private Digraph digraph;
-    private int V = 0;
+    // datastructures
+    private final Map<String, ArrayList<Integer>> allNouns = new HashMap<>();
+    private final Map<Integer, String> allKeys = new HashMap<>();
+    private final Map<Integer, ArrayList<Integer>> edges = new HashMap<>(); // Edges between vertices
+    private final SAP sap;
+    private final Digraph digraph;
+    private int graphSize = 0;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
         loadSynsets(synsets);
         loadHypernyms(hypernyms);
 
-        digraph = new Digraph(V);
+        digraph = new Digraph(graphSize);
         // fill it up
         for (Map.Entry<Integer, ArrayList<Integer>> entry : edges.entrySet()) {
             for (Integer w : entry.getValue()) {
@@ -76,7 +76,7 @@ public class WordNet {
             throw new IllegalArgumentException();
         }
 
-        Integer ancestor = sap.ancestor(allNouns.get(nounA), allNouns.get(nounB));
+        int ancestor = sap.ancestor(allNouns.get(nounA), allNouns.get(nounB));
         return allKeys.get(ancestor);
     }
 
@@ -102,20 +102,13 @@ public class WordNet {
                     currentNounsList = new ArrayList<>();
                 }
 
-                // check of index is already in allKeys
-                if (this.allKeys.containsKey(index)) {
-                    currentSynsetNouns = this.allKeys.get(index);
-                } else {
-                    currentSynsetNouns = new String();
-                }
-
                 currentNounsList.add(index);
                 currentSynsetNouns = parts[1];
 
                 this.allNouns.put(noun, currentNounsList);
                 this.allKeys.put(index, currentSynsetNouns);
             }
-            this.V++;
+            this.graphSize++;
         }
     }
 
@@ -126,7 +119,7 @@ public class WordNet {
         while ((line = in.readLine()) != null) {
             if (line.equals("")) continue;
             String[] parts = line.split(",");
-            Integer index = Integer.parseInt(parts[0]);
+            Integer index = Integer.valueOf(parts[0]);
             // check if index exists
             if (edges.get(index) != null) {
                 edgeList = edges.get(index);
@@ -135,7 +128,7 @@ public class WordNet {
             }
 
             for (int i = 1; i < parts.length; i++) {
-                edgeList.add(Integer.parseInt(parts[i]));
+                edgeList.add(Integer.valueOf(parts[i]));
             }
 
             edges.put(index, edgeList);

@@ -1,8 +1,12 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 
 public class SAP {
 
-    private Digraph G;
+    private final Digraph G;
     private BreadthFirstDirectedPaths[] bfs;
 
     // constructor takes a digraph (not necessarily a DAG)
@@ -33,9 +37,9 @@ public class SAP {
 
         for (int i = 0; i < G.V(); i++) {
             if (bfs[v].hasPathTo(i) && bfs[w].hasPathTo(i)) {
-                int l = bfs[v].distTo(i) + bfs[w].distTo(i);
-                if (l < length) {
-                    length = l;
+                int dist = bfs[v].distTo(i) + bfs[w].distTo(i);
+                if (dist < length) {
+                    length = dist;
                 }
             }
         }
@@ -74,9 +78,9 @@ public class SAP {
 
         for (int i = 0; i < G.V(); i++) {
             if (bfs[v].hasPathTo(i) && bfs[w].hasPathTo(i)) {
-                int l = bfs[v].distTo(i) + bfs[w].distTo(i);
-                if (l < length) {
-                    length = l;
+                int dist = bfs[v].distTo(i) + bfs[w].distTo(i);
+                if (dist < length) {
+                    length = dist;
                     ancestor = i;
                 }
             }
@@ -98,14 +102,12 @@ public class SAP {
         int length = Integer.MAX_VALUE;
         for (int i : v) {
             for (int j : w) {
-                int l = length(i, j);
-                if (l != -1 && l < length) {
-                    length = l;
+                int dist = length(i, j);
+                if (dist != -1 && dist < length) {
+                    length = dist;
                 }
             }
         }
-
-        assert length != -1;
 
         if (length != Integer.MAX_VALUE) {
             return length;
@@ -125,14 +127,13 @@ public class SAP {
 
         for (int i : v) {
             for (int j : w) {
-                int l = length(i, j);
-                if (l != -1 && l < length) {
-                    length = l;
+                int dist = length(i, j);
+                if (dist != -1 && dist < length) {
+                    length = dist;
                     ancestor = ancestor(i, j);
                 }
             }
         }
-        assert length != -1;
         return ancestor;
     }
 
